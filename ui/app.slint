@@ -1,10 +1,138 @@
+import { VerticalBox, ScrollView } from "std-widgets.slint";
+
+global ThemeColors {
+    in-out property <color> window-background: #1a1a1aee;
+    in-out property <color> primary-text: #ffffff;
+    in-out property <color> secondary-text: #b8b8b8;
+    in-out property <color> button-background: #2d2d2dee;
+    in-out property <color> button-hover: #404040ee;
+    in-out property <color> border-color: #8b0000;
+    in-out property <color> result-text: #d4af37;
+}
+
+component StyledButton inherits TouchArea {
+    in property <string> text;
+
+    Rectangle {
+        background: root.has-hover ? ThemeColors.button-hover : ThemeColors.button-background;
+        border-radius: 4px;
+        border-width: 2px;
+        border-color: ThemeColors.border-color;
+        animate background { duration: 150ms; }
+
+        Text {
+            text: root.text;
+            color: ThemeColors.primary-text;
+            font-size: 15px;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            wrap: word-wrap;
+            padding: 12px;
+        }
+    }
+}
+
 export component AppWindow inherits Window {
     title: "Qual é a sua Máscara?";
-    width: 400px;
-    height: 200px;
+    preferred-width: 1024px;
+    preferred-height: 768px;
+    background: ThemeColors.window-background;
 
-    Text {
-        text: "Em breve: Um questionário para revelar sua verdadeira natureza.";
-        color: yellow;
+    in-out property <string> question_text;
+    in-out property <[string]> answers;
+    in-out property <bool> quiz-active: true;
+    in-out property <string> clan_quote: "";
+
+    callback answer-selected(int);
+    callback restart-quiz;
+
+    Image {
+        width: 100%;
+        height: 100%;
+        source: @image-url("background.jpg");
+        image-fit: cover;
+        opacity: 0.3;
+    }
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        background: #00000055;
+    }
+
+    VerticalBox {
+        alignment: center;
+        spacing: 30px;
+        padding: 50px;
+
+        if quiz-active : VerticalBox {
+            alignment: center;
+            spacing: 30px;
+
+            Text {
+                text: question_text;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                font-size: 28px;
+                font-weight: 700;
+                color: ThemeColors.primary-text;
+                min-height: 120px;
+            }
+
+            VerticalBox {
+                alignment: center;
+                spacing: 15px;
+                for answer[i] in answers : StyledButton {
+                    text: answer;
+                    min-width: 600px;
+                    min-height: 70px;
+                    max-width: 800px;
+                    clicked => { root.answer-selected(i) }
+                }
+            }
+        }
+
+        if !quiz-active : VerticalBox {
+            alignment: center;
+            spacing: 30px;
+            padding: 40px;
+
+            Text {
+                text: question_text;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                font-size: 36px;
+                font-weight: 900;
+                color: ThemeColors.result-text;
+                min-height: 80px;
+            }
+
+            Rectangle {
+                height: 2px;
+                width: 400px;
+                background: ThemeColors.border-color;
+            }
+
+            Text {
+                text: clan_quote;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                font-size: 20px;
+                font-italic: true;
+                color: ThemeColors.secondary-text;
+                max-width: 700px;
+                min-height: 80px;
+            }
+
+            StyledButton {
+                text: "Reiniciar";
+                min-width: 250px;
+                min-height: 60px;
+                clicked => { root.restart-quiz() }
+            }
+        }
     }
 }
