@@ -1,10 +1,6 @@
-
-````markdown
 # 🩸 Qual é a sua Máscara? - VTM Clan Quiz
 
 <div align="center">
-
-![Screenshot](screenshot.png)
 
 **Um quiz interativo para descobrir qual clã de Vampire: The Masquerade melhor representa sua natureza vampírica**
 
@@ -51,7 +47,7 @@ cd vtm_clan_quiz
 
 # Compile e execute
 cargo run --release
-````
+
 
 ### Instalação do Binário
 
